@@ -75,4 +75,7 @@ export class CreateCatatanArrayDto {
   catatan: CreateCatatanDto[];
 }
 
-export class findAllCatatanDto extends PageRequestDto {}
+export class findAllCatatanDto extends PageRequestDto {
+  @IsOptional()
+  keyword: string;
+}

@@ -40,11 +40,30 @@ export class CatatanService extends BaseResponse {
   }
 
   async findAll(query: findAllCatatanDto): Promise<ResponsePagination> {
-    const { page, pageSize, limit } = query;
+    const { page, pageSize, limit, keyword } = query;
 
-    const total = await this.catatanRepository.count();
+    const filterQuery = {};
+    const filterKeyword = [];
+
+    if (keyword) {
+      filterKeyword.push(
+        {
+          siswa: {
+            nama_siswa: Like(`%${keyword}%`),
+          },
+        },
+        {
+          kelas: Like(`%${keyword}%`),
+        },
+      );
+    }
+
+    const total = await this.catatanRepository.count({
+      where: keyword ? filterKeyword : filterQuery,
+    });
 
     const result = await this.catatanRepository.find({
+      where: keyword ? filterKeyword : filterQuery,
       relations: ['created_by', 'updated_by', 'siswa'],
       select: {
         id: true,
