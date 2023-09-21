@@ -124,7 +124,7 @@ export class CatatanService extends BaseResponse {
     if (!check) throw new NotFoundException(`Catatan tidak ditemukan`);
     if (check.created_by.id !== created_by) {
       throw new HttpException(
-        'Tidak dapat menghapus karena id tidak cocok',
+        'Tidak dapat menghapus karena catatan ini dibuat oleh user lain',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
