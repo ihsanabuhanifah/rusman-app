@@ -16,6 +16,8 @@ export const Pagination = createParamDecorator(
     request.query.pageSize = Number(request.query.pageSize);
     request.query.page = Number(request.query.page);
 
+    console.log('mit', request.query.limit);
+
     return request.query;
   },
 );

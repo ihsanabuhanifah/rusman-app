@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Between, Like, Repository } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import BaseResponse from 'src/utils/response/base.response';
@@ -91,7 +97,39 @@ export class CatatanService extends BaseResponse {
 
       skip: limit,
       take: pageSize,
+      order: {
+        tanggal: 'DESC',
+      },
     });
     return this._pagination('OK', result, total, page, pageSize);
+  }
+
+  async deleteCatatan(
+    id: number,
+    created_by: number,
+  ): Promise<ResponseSuccess> {
+    const check = await this.catatanRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['created_by'],
+      select: {
+        id: true,
+        created_by: {
+          id: true,
+        },
+      },
+    });
+
+    if (!check) throw new NotFoundException(`Catatan tidak ditemukan`);
+    if (check.created_by.id !== created_by) {
+      throw new HttpException(
+        'Tidak dapat menghapus karena id tidak cocok',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    await this.catatanRepository.delete(id);
+    return this._success(`Berhasil menghapus catatan`);
   }
 }

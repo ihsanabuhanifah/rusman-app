@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtGuard } from '../auth/auth.guard';
 import { CatatanService } from './catatan.service';
 import {
@@ -7,6 +16,8 @@ import {
   findAllCatatanDto,
 } from './catatan.dto';
 import { InjectCreatedBy } from 'src/utils/decorator/inject-created_by.decorator';
+import { Pagination } from 'src/utils/decorator/pagination.decorator';
+import { CheckCreateBy } from 'src/utils/decorator/delete.decorator';
 
 @UseGuards(JwtGuard)
 @Controller('catatan')
@@ -18,7 +29,15 @@ export class CatatanController {
   }
 
   @Get('list')
-  async list(@Query() query: findAllCatatanDto) {
+  async list(@Pagination() query: findAllCatatanDto) {
     return this.catatanService.findAll(query);
+  }
+
+  @Delete('delete/:id')
+  deleteBook(@CheckCreateBy('params') params: any) {
+    return this.catatanService.deleteCatatan(
+      Number(params.id),
+      Number(params.created_by.id),
+    );
   }
 }
