@@ -68,6 +68,11 @@ export class CreateCatatanDto extends OmitType(CatatanDto, [
   'updated_count',
 ]) {}
 
+export class UpdateCatatanDto extends OmitType(CatatanDto, [
+  'id',
+  'updated_count',
+]) {}
+
 export class CreateCatatanArrayDto {
   @IsArray()
   @ValidateNested({ each: true })

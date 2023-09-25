@@ -10,7 +10,11 @@ import { REQUEST } from '@nestjs/core';
 import BaseResponse from 'src/utils/response/base.response';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Catatan } from './catatan.entity';
-import { CreateCatatanArrayDto, findAllCatatanDto } from './catatan.dto';
+import {
+  CreateCatatanArrayDto,
+  UpdateCatatanDto,
+  findAllCatatanDto,
+} from './catatan.dto';
 import { ResponsePagination, ResponseSuccess } from 'src/interface/response';
 @Injectable()
 export class CatatanService extends BaseResponse {
@@ -43,6 +47,19 @@ export class CatatanService extends BaseResponse {
     } catch {
       throw new HttpException('Ada Kesalahan', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async getDetail(id: number): Promise<ResponseSuccess> {
+    const detailBook = await this.catatanRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (detailBook === null) {
+      throw new NotFoundException(`Buku dengan id ${id} tidak ditemukan`);
+    }
+    return this._success('ok', detailBook);
   }
 
   async findAll(query: findAllCatatanDto): Promise<ResponsePagination> {
@@ -131,5 +148,29 @@ export class CatatanService extends BaseResponse {
 
     await this.catatanRepository.delete(id);
     return this._success(`Berhasil menghapus catatan`);
+  }
+
+  async updateBook(
+    id: number,
+    updateBookDto: UpdateCatatanDto,
+  ): Promise<ResponseSuccess> {
+    const check = await this.catatanRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!check)
+      throw new NotFoundException(`Buku dengan id ${id} tidak ditemukan`);
+
+    const update = await this.catatanRepository.save({
+      ...updateBookDto,
+      id: id,
+    });
+    return {
+      status: `Success `,
+      message: 'Buku berhasil di update',
+      data: update,
+    };
   }
 }
