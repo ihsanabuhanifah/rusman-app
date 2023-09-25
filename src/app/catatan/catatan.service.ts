@@ -51,6 +51,30 @@ export class CatatanService extends BaseResponse {
 
   async getDetail(id: number): Promise<ResponseSuccess> {
     const detailBook = await this.catatanRepository.findOne({
+      relations: ['created_by', 'updated_by', 'siswa'],
+      select: {
+        id: true,
+        kategori: true,
+        poin: true,
+        keterangan: true,
+        tanggal: true,
+        kelas: true,
+        semester: true,
+        ta_id: true,
+
+        siswa: {
+          id: true,
+          nama_siswa: true,
+        },
+        created_by: {
+          id: true,
+          nama: true,
+        },
+        updated_by: {
+          id: true,
+          nama: true,
+        },
+      },
       where: {
         id,
       },

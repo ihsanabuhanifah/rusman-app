@@ -7,7 +7,7 @@
 //   password: process.env.DB_PASSWORD || 'root', // password default xampp string kosong
 //   database: process.env.DB_DATABASE || 'rusman_project',
 //   entities: ['dist/**/*.entity{.ts,.js}'],
-//   synchronize: true,
+//   synchronize: false,
 // };
 
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
